@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.darko.stravel.Places">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:paddingBottom="@dimen/activity_vertical_margin">
+
+        <ImageView
+            android:id="@+id/place_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/notavailable" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingBottom="6dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1.3"
+            android:background="@android:color/transparent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/place_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+                android:text="name"
+                android:textSize="20dip"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/place_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+                android:text="address"
+                android:textSize="16dip" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="@android:color/transparent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/place_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="float"
+                android:textColor="#ffa500"
+                android:textSize="28dip" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/place_worktime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingTop="8dp"
+            android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:text="worktime description etc..."
+            android:textSize="16dip" />
+
+        <TextView
+            android:id="@+id/place_telnumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink = "phone"
+            android:background="@color/white"
+            android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:text="worktime description etc..."
+            android:textSize="16dip" />
+
+        <TextView
+            android:id="@+id/place_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink = "email"
+            android:background="@color/white"
+            android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:text="worktime description etc..."
+            android:textSize="16dip" />
+
+        <TextView
+            android:id="@+id/place_website"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:background="@color/white"
+            android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:text="worktime description etc..."
+            android:textSize="16dip" />
+
+        <TextView
+            android:id="@+id/place_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:text="worktime description etc..."
+            android:textSize="16dip" />
+
+    </LinearLayout>
+</LinearLayout>
