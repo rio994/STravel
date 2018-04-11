@@ -11,6 +11,8 @@ public class TableEvents {
     String start_time;
     String end_time;
     String description;
+    String link;
+
 
 
     ////constructors
@@ -77,5 +79,13 @@ public class TableEvents {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }
