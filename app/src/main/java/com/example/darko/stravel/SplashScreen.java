@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentActivity;
 
 public class SplashScreen extends FragmentActivity {
 
+    //adding todo list - add a jingle up to 4sec
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

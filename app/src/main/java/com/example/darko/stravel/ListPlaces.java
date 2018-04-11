@@ -29,6 +29,8 @@ public class ListPlaces extends AppCompatActivity {
         setContentView(R.layout.activity_list_places);
 
 
+        //adding to todo list - add a filter to change display of places according to name,*,address,category, etc...
+
         listView = (ListView) findViewById(R.id.listView);
 
         DatabaseAccess databaseAccess = DatabaseAccess.getInstance(this);

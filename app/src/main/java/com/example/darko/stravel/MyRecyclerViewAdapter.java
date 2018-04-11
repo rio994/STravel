@@ -35,6 +35,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.eventsName.setText(mEvents.get(position).getName());
+
         //adding to todo list
         //holder.eventsPlace.setText(mEvents.get(position).getID_place());
         holder.eventTime.setText(new StringBuilder().append(mEvents.get(position).getStart_time()).append(" - ").append(mEvents.get(position).getEnd_time()).toString());

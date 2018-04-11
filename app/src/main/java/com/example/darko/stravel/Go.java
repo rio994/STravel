@@ -10,10 +10,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
+
 public class Go extends AppCompatActivity implements OnMapReadyCallback{
 
     GoogleMap mMap;
     SupportMapFragment fm;
+
+    //adding to todo list - add a fragment for a user to select between services instead of pressing on buttons (services)
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_go);

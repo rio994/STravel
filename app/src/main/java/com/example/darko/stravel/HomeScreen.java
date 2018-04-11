@@ -30,6 +30,8 @@ public class HomeScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
+        //adding to todo list - better icons, better background
+
         about = (ImageButton) findViewById(R.id.about);
         places = (ImageButton) findViewById(R.id.places);
         events = (ImageButton) findViewById(R.id.events);

@@ -31,6 +31,10 @@ public class Events extends AppCompatActivity {
     ArrayList<String> eventLinks;
     TableEvents events;
 
+
+    //adding to todo list - list calendar for next 7 days for the user to choose from  --pressing a day--> all events on the chosen day
+    //adding to todo list - pressing on the place inside an event goes to place activity to that place
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

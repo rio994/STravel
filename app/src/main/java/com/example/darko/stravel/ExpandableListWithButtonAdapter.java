@@ -90,6 +90,10 @@ public class ExpandableListWithButtonAdapter extends BaseExpandableListAdapter {
         txtListChild.setMaxLines(5);
         txtListChild.setText(childText);
 
+        //padding of text element
+        //adding to todo list
+        txtListChild.setPadding(txtListChild.getPaddingLeft()/2,txtListChild.getPaddingTop(),txtListChild.getPaddingRight()/2,txtListChild.getPaddingBottom());
+
         final Button butListChild = (Button) view.findViewById(R.id.MoreLessButton);
 
         butListChild.setOnClickListener(new View.OnClickListener(){

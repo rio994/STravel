@@ -18,6 +18,8 @@ import android.database.Cursor;
 
 public class Places extends AppCompatActivity {
 
+    //adding to todo list - change list into buttons(icons)
+
 
     private int lastExpandedPosition = -1;
     private ExpandableListView listView;

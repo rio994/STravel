@@ -50,6 +50,7 @@ public class About extends AppCompatActivity {
     private HashMap<String,List<String>> listHash;
     ViewPagerAdapter viewPagerAdapter;
 
+    //adding to todo list - change to scrollable activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
