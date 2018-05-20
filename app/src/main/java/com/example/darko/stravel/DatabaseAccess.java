@@ -8,10 +8,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseAccess {
     private SQLiteOpenHelper openHelper;
@@ -21,6 +20,11 @@ public class DatabaseAccess {
     // Table Names
     private static final String TABLE_PLACES = "Places";
     private static final String TABLE_EVENTS = "Events";
+    private static final String TABLE_EVENTLINKS = "EventLinks";
+
+    //EventLinks Table - column names
+    private static final String KEY_ID_EVENTLINKS = "ID_eventLinks";
+    private static final String KEY_EVENTLINK = "event_link";
 
     // Common column names
     private static final String KEY_ID_PLACE = "ID_place";
@@ -87,6 +91,38 @@ public class DatabaseAccess {
      *
      * @return a List of quotes
      */
+
+
+    //return all event links
+
+    public ArrayList<TableEventLinks> getAllEventLinks(Context context){
+        ArrayList<TableEventLinks> eventLinks = new ArrayList<>();
+       /* Cursor c = database.rawQuery("SELECT * FROM TableEventLinks", null);
+        c.moveToNext();
+        if(c.moveToFirst()){
+            do{
+                TableEventLinks e1 = new TableEventLinks();
+                e1.setID_eventLink(c.getInt(c.getColumnIndex(KEY_ID_EVENTLINKS)));
+                e1.setEventLink(c.getString(c.getColumnIndex(KEY_EVENTLINK)));
+                eventLinks.add(e1);
+            }while(c.moveToNext());
+
+        }*/
+
+        Cursor c = database.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+
+        if (c.moveToFirst()) {
+            while ( !c.isAfterLast() ) {
+                Toast.makeText(context, "Table Name=> "+c.getString(0), Toast.LENGTH_LONG).show();
+                c.moveToNext();
+            }
+        }
+
+
+        return eventLinks;
+    }
+
+
     public ArrayList<TablePlaces> getPlaces() {
         ArrayList<TablePlaces> places = new ArrayList<>();
         Cursor c = database.rawQuery("SELECT * FROM TablePlaces", null);

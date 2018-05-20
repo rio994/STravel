@@ -28,19 +28,31 @@
         <activity
             android:name=".FullscreenViewPager"
             android:screenOrientation="landscape" />
-        <activity android:name=".Go"/>
-        <activity android:name=".Events"/>
+        <activity android:name=".Go" />
+        <activity android:name=".Events" />
         <activity android:name=".Places" />
         <activity android:name=".ListPlaces" />
         <activity android:name=".Place" />
         <activity
             android:name=".FullscreenImage"
-            android:screenOrientation="landscape"></activity>
-        <activity android:name=".Info"></activity>
+            android:screenOrientation="landscape" />
+        <activity android:name=".Info" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <service
+            android:name=".PopulateEventLinksService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".DownloadDataForEventsService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".SingleLinkParseDataIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
