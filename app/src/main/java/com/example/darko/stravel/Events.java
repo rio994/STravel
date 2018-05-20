@@ -32,17 +32,12 @@ public class Events extends AppCompatActivity {
         myData = TableEventsNewSigletonArray.getInstance();
         tableEventsNewArray=myData.getEventsTable();
 
-        for(int i=0;i<tableEventsNewArray.size();i++){
+     /*   for(int i=0;i<tableEventsNewArray.size();i++){
             Toast.makeText(getApplicationContext(),"Name of Event: "+tableEventsNewArray.get(i).getNameOfEvent()+"\nDate: "+tableEventsNewArray.get(i).getDate()+
             "\nTime: "+tableEventsNewArray.get(i).getTime()+"\n\nDescription: "+tableEventsNewArray.get(i).getDescription(),Toast.LENGTH_LONG).show();
         }
+        */
 
-
-        // data to populate the RecyclerView with
-        ArrayList<TableEvents> Events = new ArrayList<>();
-
-        //just 1 element
-        Events.add(new TableEvents(1,1, "Party", "00:00", "24:00","description"));
 
 
 
@@ -50,7 +45,7 @@ public class Events extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
         LinearLayoutManager horizontalLayoutManagaer = new LinearLayoutManager(Events.this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(horizontalLayoutManagaer);
-        adapter = new MyRecyclerViewAdapter(this, Events);
+        adapter = new MyRecyclerViewAdapter(this, tableEventsNewArray);
         adapter.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
