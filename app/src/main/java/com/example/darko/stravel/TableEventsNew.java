@@ -3,12 +3,17 @@ package com.example.darko.stravel;
 
 //Class used for storing one Event
 
+import android.graphics.Bitmap;
+
 public class TableEventsNew {
     private String nameOfEvent;
     private String date;
     private String time;
     private String category;
+    private String price;
     private String description;
+    private String location;
+    private Bitmap bitmap;
 
     public void setNameOfEvent(String nameOfEvent){
         this.nameOfEvent=nameOfEvent;
@@ -50,4 +55,15 @@ public class TableEventsNew {
         this.description = description;
     }
 
+    public void setLocation(String location){this.location = location; }
+
+    public String getLocation() { return location; }
+
+    public String getPrice() {return price; }
+
+    public void setPrice(String price) { this.price = price;}
+
+    public void setBitmap(Bitmap bitmap){this.bitmap = bitmap; }
+
+    public Bitmap getBitmap() {return bitmap; }
 }

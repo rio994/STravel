@@ -26,7 +26,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Table Names
     private static final String TABLE_PLACES = "Places";
     private static final String TABLE_EVENTS = "Events";
-    public static final String TABLE_EVENTLINKS = "EventLinks";
 
     // Common column names
     private static final String KEY_ID_PLACE = "ID_place";
@@ -49,12 +48,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_START_TIME = "start_time";
     private static final String KEY_END_TIME = "end_time";
 
-    //EventLinks Table - column names
-    public static final String KEY_ID_EVENTLINKS = "ID_eventLinks";
-    public static final String KEY_EVENTLINK = "event_link";
-
-
-
     // Table Create Statements
     // PLACES table create statement
     private static final String CREATE_TABLE_PLACES = "CREATE TABLE "
@@ -71,10 +64,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " FOREIGN KEY ("+KEY_ID_PLACE+") REFERENCES "
             + TABLE_PLACES + ")";
 
-    //EventLinks table create statment
-
-    private static final String CREATE_TABLE_LINK = "CREATE TABLE "+ TABLE_EVENTLINKS
-            + "("+ KEY_ID_EVENTLINKS + " INTEGER PRIMARY KEY," + KEY_EVENTLINK + " TEXT"+")";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -85,7 +74,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // creating required tables
         db.execSQL(CREATE_TABLE_PLACES);
-        db.execSQL(CREATE_TABLE_LINK);
         db.execSQL(CREATE_TABLE_EVENTS);
     }
 
@@ -94,37 +82,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLACES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTLINKS);
-
         // create new tables
         onCreate(db);
     }
 
-
-    //get All links for every event
-
-    public List<TableEventLinks> getAllLinks(){
-        List<TableEventLinks> eventLinks = new ArrayList<TableEventLinks>();
-        String selectQuery = "SELECT  * FROM " + TABLE_EVENTLINKS +";";
-        Log.e(LOG, selectQuery);
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery, null);
-        // looping through all rows and adding to list
-        if (c.moveToFirst()) {
-            do{
-                TableEventLinks e1 = new TableEventLinks();
-                e1.setID_eventLink(c.getInt(c.getColumnIndex(KEY_ID_EVENTLINKS)));
-                e1.setEventLink(c.getString(c.getColumnIndex(KEY_EVENTLINK)));
-                eventLinks.add(e1);
-            }while(c.moveToNext());
-
-        }
-
-
-        return  eventLinks;
-
-    }
 
 
     public List<TablePlaces> getAllPlaces() {
