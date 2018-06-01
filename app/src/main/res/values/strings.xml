@@ -9,6 +9,8 @@
     <string name="title_activity_fullscreen_image">FullscreenImage</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBGwnDTCj6jZ6noNT_DEeF-NkVEYLDrikU</string>
 </resources>
 

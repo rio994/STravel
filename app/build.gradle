@@ -16,6 +16,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi-v7a'
+            universalApk true
+        }
+    }
 }
 
 dependencies {
@@ -29,9 +37,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
-    compile 'jp.wasabeef:blurry:2.1.1'
-    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
-    compile 'com.google.android.gms:play-services:7.8.0'
+    implementation 'jp.wasabeef:blurry:2.1.1'
     implementation 'org.jsoup:jsoup:1.11.3'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
+    implementation 'com.google.android.gms:play-services:12.0.1'
+    implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
+    implementation 'com.r0adkll:slidableactivity:2.0.6'
 }
