@@ -16,10 +16,8 @@ public class SingleLinkParseDataIntentService extends IntentService {
 
     TableEventsNew oneElementOfTableEvents;
 
-
     private static final String ACTION_DOWNLOAD = "com.example.darko.stravel.action.ACTIONDOWNLOAD";
 
-    // TODO: Rename parameters
     private static final String EXTRA_PARAM1 = "com.example.darko.stravel.extra.PARAM1";
 
 
