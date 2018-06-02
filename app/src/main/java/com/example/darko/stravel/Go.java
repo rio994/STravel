@@ -3,22 +3,21 @@ package com.example.darko.stravel;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.internal.NavigationMenuView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,8 +62,13 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     private NavigationView mNavigationView;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private EditText searchBar;
+    NavigationMenuView navMenuView;
+    View navDrawerHeader;
     //icons
     private ImageView gpsButton;
+    private ImageView navMenu;
+    LocationManager locationManager;
+
 
     //adding to todo list - add a fragment for a user to select between services instead of pressing on buttons (services)
 
@@ -77,20 +81,24 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView)findViewById(R.id.nav_view);
         mNavigationView.bringToFront();
+        navMenuView = (NavigationMenuView) mNavigationView.getChildAt(0);
+        navMenuView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+        navDrawerHeader = mNavigationView.getHeaderView(0);
+        navMenu=(ImageView)findViewById(R.id.ic_menu);
+
 
         //explicitly check permission and init map
         getLocationPermission();
 
-        //setting onClick listeners for searchBar, gspButton
+        //setting onClick listeners for searchBar, gspButton, navMenu
         init();
 
         //set map content from  navigation item selected
         setupNavigationContent();
 
-
-
     }
 
+    //called once by API to setup map for first time (initial setup)
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -114,11 +122,19 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
 
     //setNavigationItemSelectedListener
     public void setupNavigationContent(){
+        //onCLick close navigation Drawer
+        navDrawerHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+
+
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 setMarkersOnSelectedNavigationItem(item);
-
                 return false;
             }
         });
@@ -129,7 +145,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
         switch (item.getItemId()){
             case R.id.restaurant:
                 Toast.makeText(Go.this,"yolo",Toast.LENGTH_SHORT).show();
-              //  item.setChecked(true);
+                //  item.setChecked(true);
                 break;
             case R.id.bars_and_clubs:
                 item.setChecked(true);
@@ -174,9 +190,9 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
                 break;
             default:
                 break;
-            }
-        mDrawerLayout.closeDrawer(GravityCompat.START);
         }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
 
     //close drawer on Back pressed or close activity
     @Override
@@ -191,7 +207,6 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     //get current location
     private void getCurrentDeviceLocation() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
         try {
             if (mLocationPermissionGranted) {
                 Task location = mFusedLocationProviderClient.getLastLocation();
@@ -217,16 +232,17 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     private void getLocationPermission() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
+
         if (ContextCompat.checkSelfPermission(getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(getApplicationContext(),  COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocationPermissionGranted = true;
                 initMap();
             }else {
 
-                ActivityCompat.requestPermissions(this, permissions,REQUEST_CODE);
+                ActivityCompat.requestPermissions(Go.this, permissions,REQUEST_CODE);
             }
         }else {
-            ActivityCompat.requestPermissions(this, permissions,REQUEST_CODE);
+            ActivityCompat.requestPermissions(Go.this, permissions,REQUEST_CODE);
         }
     }
 
@@ -254,6 +270,13 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
                 getCurrentDeviceLocation();
+            }
+        });
+
+        navMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
@@ -341,4 +364,5 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
 
         hideSoftKeyboard();
     }
+
 }

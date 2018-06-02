@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@drawable/navigation_drawer_header"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/back_btn_navigation"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:src="@drawable/ic_back_btn_navigation_drawer"
+            />
+
+
+        <TextView
+            android:text="RECOMMENDATIONS"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorBlack"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+
+
+    </LinearLayout>
+</RelativeLayout>

@@ -1,7 +1,11 @@
 package com.example.darko.stravel;
 
+import android.Manifest;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,11 +23,15 @@ import android.widget.ImageButton;
 import android.os.AsyncTask;
 import java.io.InputStream;
 import android.util.Log;
+import android.widget.Toast;
 
 public class HomeScreen extends AppCompatActivity {
 
     private ImageButton about,places,events,info,go;
     ImageView img;
+
+    String[] permissions = {android.Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
