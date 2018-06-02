@@ -5,15 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawerLayout"
-    tools:context="com.example.darko.stravel.Go">
-
+    tools:context="com.example.darko.stravel.Go"
+    >
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/navigation_drawer_header"
         android:layout_gravity="start"
-        app:menu="@menu/navigation_menu"></android.support.design.widget.NavigationView>
+        app:menu="@menu/navigation_menu"
+        app:itemIconTint="@color/colorBlack"
+        app:itemTextColor="@color/colorBlack"
+        app:itemBackground="@drawable/navigation_item_background"
+        app:itemTextAppearance="@style/NavigationViewStyle"
+        >
+    </android.support.design.widget.NavigationView>
 
     <FrameLayout
                 android:layout_width="match_parent"
@@ -24,6 +32,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -79,7 +88,26 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_gps"
                 />
+        </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="70dp"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10dp"
+            android:elevation="100dp"
+
+            >
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/ic_menu"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_nav_menu"
+                />
         </RelativeLayout>
 
     </FrameLayout>
