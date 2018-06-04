@@ -20,6 +20,7 @@ public class SplashScreen extends FragmentActivity {
                 try {
                     sleep(2000);
                     finish();
+                    startService(new Intent(getApplicationContext(),ReadDatabaseService.class));
                     startService(new Intent(getApplicationContext(),PopulateEventLinksService.class));
                     Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
                     startActivity(intent);

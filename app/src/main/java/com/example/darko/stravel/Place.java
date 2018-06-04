@@ -33,7 +33,7 @@ public class Place extends AppCompatActivity {
         {
             DatabaseAccess databaseAccess = DatabaseAccess.getInstance(this);
             databaseAccess.open();
-            place = databaseAccess.getPlace(id);
+            //place = databaseAccess.getPlace(id);
             databaseAccess.close();
 
             placeName = findViewById(R.id.place_name);

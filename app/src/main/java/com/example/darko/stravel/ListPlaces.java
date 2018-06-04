@@ -35,7 +35,7 @@ public class ListPlaces extends AppCompatActivity {
 
         DatabaseAccess databaseAccess = DatabaseAccess.getInstance(this);
         databaseAccess.open();
-        places = databaseAccess.getPlaces();
+        //places = databaseAccess.getPlaces();
         databaseAccess.close();
 
         /*

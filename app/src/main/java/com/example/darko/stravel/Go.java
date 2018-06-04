@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.view.KeyEvent;
@@ -35,11 +36,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,23 +54,37 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int REQUEST_CODE = 1950;
     private static final float DEFAULT_ZOOM = 15f;
+    private static final float DEFAULT_ZOOM_ON_ITEM_CLICKED = 14f;
+    private static final LatLng DEFAULT_LAT_LNG = new LatLng(43.511032,16.436404);
 
     //variables
-    //explicit check if location permissions are granted
     private boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
     private SupportMapFragment fm;
+    private Marker mMarker;
+    private DatabaseSingleton databaseSingleton;
+    private boolean isInfoWindowShown=false;
+    private LocationManager locationManager;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+
     //navigation menu
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
     private EditText searchBar;
-    NavigationMenuView navMenuView;
-    View navDrawerHeader;
+    private NavigationMenuView navMenuView;
+    private View navDrawerHeader;
+
+    private ArrayList<TableAtmToilet> atmToilets;
+    private ArrayList<TableRestaurant> restaurants;
+    private ArrayList<TableBarShopping> barShopping;
+    private ArrayList<TableBeach> beaches;
+    private ArrayList<TablePHP> php;
+    private ArrayList<TableTransport> transport;
+
     //icons
-    private ImageView gpsButton;
-    private ImageView navMenu;
-    LocationManager locationManager;
+    private ImageView gpsButton, navMenu;
+
+    //todo database holds more info than needed
 
 
     //adding to todo list - add a fragment for a user to select between services instead of pressing on buttons (services)
@@ -76,6 +93,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_go);
+        locationManager=(LocationManager)getApplicationContext().getSystemService((Context.LOCATION_SERVICE));
         gpsButton = (ImageView)findViewById(R.id.ic_gps);
         searchBar = (EditText)findViewById(R.id.map_search_edit_text);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -85,6 +103,14 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
         navMenuView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
         navDrawerHeader = mNavigationView.getHeaderView(0);
         navMenu=(ImageView)findViewById(R.id.ic_menu);
+        databaseSingleton=DatabaseSingleton.getInstance();
+        atmToilets = databaseSingleton.getTableAtmToilets();
+        restaurants = databaseSingleton.getTableRestaurants();
+        barShopping = databaseSingleton.getTableBarShoppings();
+        beaches=databaseSingleton.getTableBeaches();
+        php=databaseSingleton.getTablePHPs();
+        transport=databaseSingleton.getTableTransport();
+
 
 
         //explicitly check permission and init map
@@ -103,20 +129,58 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-
-        //if GPS is enabled get my current location
-        if (mLocationPermissionGranted) {
-            getCurrentDeviceLocation();
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
+        //if gps provider is on
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            //if location permission is enabled get my current location
+            if (mLocationPermissionGranted) {
+                getCurrentDeviceLocation();
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                mMap.setMyLocationEnabled(true);
+            } else {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG, DEFAULT_ZOOM_ON_ITEM_CLICKED));
+                Toast.makeText(getApplicationContext(), "Location permission denied, current location unavailable", Toast.LENGTH_LONG).show();
             }
-            //show blue dot for current location on map
-            mMap.setMyLocationEnabled(true);
-            //hide unnecessary default location button
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }else{
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG, DEFAULT_ZOOM_ON_ITEM_CLICKED));
+            Toast.makeText(getApplicationContext(), "GPS provider disabled, current location unavailable", Toast.LENGTH_LONG).show();
         }
+        //hide unnecessary default location button
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        //on Marker listener
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                //if marker doesn't have snippet, marker is set by searchBar
+                if( marker.getSnippet()!=null) {
+                    //enable switching between markers without click for close marker
+                    if (mMarker.equals(marker)) {
+                        if (isInfoWindowShown) {
+                            mMarker.hideInfoWindow();
+                            isInfoWindowShown = false;
+                            return true;
+                        } else {
+                            marker.showInfoWindow();
+                            isInfoWindowShown = true;
+                            return false;
+                        }
+
+                    } else {
+                        marker.showInfoWindow();
+                        mMarker = marker;
+                        isInfoWindowShown = true;
+                        return false;
+                    }
+                }
+                //todo add else statement and create snippet and title for marker from searchBar
+                return true;
+            }
+        });
+
 
     }
 
@@ -144,50 +208,232 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
 
         switch (item.getItemId()){
             case R.id.restaurant:
-                Toast.makeText(Go.this,"yolo",Toast.LENGTH_SHORT).show();
-                //  item.setChecked(true);
+                mMap.clear();
+                for(int i = 0; i< restaurants.size(); i++){
+                    String snippet = restaurants.get(i).getNumberOfReviews() + " reviews"+"\n"+
+                            "Type: "+ restaurants.get(i).getType()+"\n"+
+                            "Working time: "+ restaurants.get(i).getWorkingTime()+"\n"+
+                            "Phone: "+ restaurants.get(i).getPhone()+"\n"+
+                            "Address: "+ restaurants.get(i).getAddress()+"\n"+
+                            "Description: "+ restaurants.get(i).getDescription();
+                    LatLng latLng = new LatLng(Double.parseDouble(restaurants.get(i).getLat()),Double.parseDouble(restaurants.get(i).getLon()));
+                    MarkerOptions options = new MarkerOptions().position(latLng).title(restaurants.get(i).getName()+ "\t  "+restaurants.get(i).getReview()+"\u2606").snippet(snippet);
+                    mMarker=mMap.addMarker(options);
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.bars_and_clubs:
-                item.setChecked(true);
-                Toast.makeText(Go.this,"yolo",Toast.LENGTH_SHORT).show();
+                mMap.clear();
+                for(int i = 0; i< barShopping.size(); i++){
+                    if(barShopping.get(i).getSubtype().equals("bar")|| barShopping.get(i).getSubtype().equals("club")) {
+                        String snippet = barShopping.get(i).getNumberOfReviews() + " reviews"+"\n"+
+                                "Working time: "+ barShopping.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ barShopping.get(i).getPhone()+"\n"+
+                                "Address: "+ barShopping.get(i).getAddress()+"\n"+
+                                "Description: "+ barShopping.get(i).getDescription();
+                        LatLng latLng = new LatLng(Double.parseDouble(barShopping.get(i).getLat()),Double.parseDouble(barShopping.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(barShopping.get(i).getName()+ "\t  "+ barShopping.get(i).getReview()+"\u2606").snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.cafes:
-                item.setChecked(true);
-                Toast.makeText(Go.this,"yolo",Toast.LENGTH_SHORT).show();
+                mMap.clear();
+                for(int i = 0; i< barShopping.size(); i++){
+                    if(barShopping.get(i).getSubtype().equals("cafe")|| barShopping.get(i).getSubtype().equals("c")) {
+                        String snippet = barShopping.get(i).getNumberOfReviews() + " reviews"+"\n"+
+                                "Working time: "+ barShopping.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ barShopping.get(i).getPhone()+"\n"+
+                                "Address: "+ barShopping.get(i).getAddress()+"\n"+
+                                "Description: "+ barShopping.get(i).getDescription();
+                        LatLng latLng = new LatLng(Double.parseDouble(barShopping.get(i).getLat()),Double.parseDouble(barShopping.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(barShopping.get(i).getName()+ "\t  "+ barShopping.get(i).getReview()+"\u2606").snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.night_life:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i = 0; i< barShopping.size(); i++){
+                    if(barShopping.get(i).getSubtype().equals("night club")|| barShopping.get(i).getSubtype().equals("n")) {
+                        String snippet = barShopping.get(i).getNumberOfReviews() + " reviews"+"\n"+
+                                "Working time: "+ barShopping.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ barShopping.get(i).getPhone()+"\n"+
+                                "Address: "+ barShopping.get(i).getAddress()+"\n"+
+                                "Description: "+ barShopping.get(i).getDescription();
+                        LatLng latLng = new LatLng(Double.parseDouble(barShopping.get(i).getLat()),Double.parseDouble(barShopping.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(barShopping.get(i).getName()+ "\t  "+ barShopping.get(i).getReview()+"\u2606").snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.beach:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i=0;i<beaches.size();i++){
+                        String snippet = beaches.get(i).getNumberOfReviews() + " reviews"+"\n"+
+                                "Address: "+ beaches.get(i).getAddress()+"\n"+
+                                "Description: "+ beaches.get(i).getDescription();
+                        LatLng latLng = new LatLng(Double.parseDouble(beaches.get(i).getLat()),Double.parseDouble(beaches.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(beaches.get(i).getName()+ "\t  "+beaches.get(i).getReview()+"\u2606").snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                    mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.atm:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i = 0; i< atmToilets.size(); i++){
+                    if(atmToilets.get(i).getSubtype().equals("atm")) {
+                        String snippet = "Address: "+ atmToilets.get(i).getAddress()+"\n";
+                        LatLng latLng = new LatLng(Double.parseDouble(atmToilets.get(i).getLat()),Double.parseDouble(atmToilets.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(atmToilets.get(i).getDescription()).snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.public_toilet:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i = 0; i< atmToilets.size(); i++){
+                    if(atmToilets.get(i).getSubtype().equals("toilet")|| atmToilets.get(i).getSubtype().equals("t")) {
+                        String snippet = "Address: "+ atmToilets.get(i).getAddress()+"\n";
+                        LatLng latLng = new LatLng(Double.parseDouble(atmToilets.get(i).getLat()),Double.parseDouble(atmToilets.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(atmToilets.get(i).getDescription()).snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.pharmacy:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i=0;i<php.size();i++){
+                    if(php.get(i).getSubtype().equals("pharmacy")|| php.get(i).getSubtype().equals("ph")) {
+                        String snippet = "Working time: "+ php.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ php.get(i).getPhone()+"\n"+
+                                "Address: "+ php.get(i).getAddress()+"\n";
+                        LatLng latLng = new LatLng(Double.parseDouble(php.get(i).getLat()),Double.parseDouble(php.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(php.get(i).getName()).snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.hospitals:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i=0;i<php.size();i++){
+                    if(php.get(i).getSubtype().equals("hospital")|| php.get(i).getSubtype().equals("h")) {
+                        String snippet = "Working time: "+ php.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ php.get(i).getPhone()+"\n"+
+                                "Address: "+ php.get(i).getAddress()+"\n";
+                        LatLng latLng = new LatLng(Double.parseDouble(php.get(i).getLat()),Double.parseDouble(php.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(php.get(i).getName()).snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.police_station:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i=0;i<php.size();i++){
+                    if(php.get(i).getSubtype().equals("police")|| php.get(i).getSubtype().equals("po")) {
+                        String snippet = "Working time: "+ php.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ php.get(i).getPhone()+"\n"+
+                                "Address: "+ php.get(i).getAddress()+"\n";
+                        LatLng latLng = new LatLng(Double.parseDouble(php.get(i).getLat()),Double.parseDouble(php.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(php.get(i).getName()).snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.shopping_center:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i = 0; i< barShopping.size(); i++){
+                    if(barShopping.get(i).getSubtype().equals("center")|| barShopping.get(i).getSubtype().equals("sc")) {
+                        String snippet = barShopping.get(i).getNumberOfReviews() + " reviews"+"\n"+
+                                "Working time: "+ barShopping.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ barShopping.get(i).getPhone()+"\n"+
+                                "Address: "+ barShopping.get(i).getAddress()+"\n"+
+                                "Description: "+ barShopping.get(i).getDescription();
+                        LatLng latLng = new LatLng(Double.parseDouble(barShopping.get(i).getLat()),Double.parseDouble(barShopping.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(barShopping.get(i).getName()+ "\t  "+ barShopping.get(i).getReview()+"\u2606").snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.airport:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i=0;i<transport.size();i++){
+                    if(transport.get(i).getSubtype().equals("airport")) {
+                        String snippet = "Working time: "+ transport.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ transport.get(i).getPhone()+"\n"+
+                                "Address: "+ transport.get(i).getAddress()+"\n";
+                        LatLng latLng = new LatLng(Double.parseDouble(transport.get(i).getLat()),Double.parseDouble(transport.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(transport.get(i).getName()).snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(43.538415,16.378432),11));
                 break;
+
             case R.id.bus_and_train:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i=0;i<transport.size();i++){
+                    if(transport.get(i).getSubtype().equals("bus")) {
+                        String snippet = "Working time: "+ transport.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ transport.get(i).getPhone()+"\n"+
+                                "Address: "+ transport.get(i).getAddress()+"\n";
+                        LatLng latLng = new LatLng(Double.parseDouble(transport.get(i).getLat()),Double.parseDouble(transport.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(transport.get(i).getName()).snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             case R.id.ferry_terminal:
-                item.setChecked(true);
+                mMap.clear();
+                for(int i=0;i<transport.size();i++){
+                    if(transport.get(i).getSubtype().equals("ferry")) {
+                        String snippet = "Working time: "+ transport.get(i).getWorkingTime()+"\n"+
+                                "Phone: "+ transport.get(i).getPhone()+"\n"+
+                                "Address: "+ transport.get(i).getAddress()+"\n";
+                        LatLng latLng = new LatLng(Double.parseDouble(transport.get(i).getLat()),Double.parseDouble(transport.get(i).getLon()));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(transport.get(i).getName()).snippet(snippet);
+                        mMarker=mMap.addMarker(options);
+                    }
+                }
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
                 break;
+
             default:
                 break;
         }
@@ -206,25 +452,30 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
 
     //get current location
     private void getCurrentDeviceLocation() {
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        try {
-            if (mLocationPermissionGranted) {
-                Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-                            //if we get some location
-                            Location currentLocation = (Location) task.getResult();
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM,"My location");
-                        } else {
-                            Toast.makeText(getApplicationContext(), " Location  is null", Toast.LENGTH_LONG).show();
+        locationManager=(LocationManager)getApplicationContext().getSystemService((Context.LOCATION_SERVICE));
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            try {
+                if (mLocationPermissionGranted) {
+                    Task location = mFusedLocationProviderClient.getLastLocation();
+                    location.addOnCompleteListener(new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if (task.isSuccessful()) {
+                                //if we get some location
+                                Location currentLocation = (Location) task.getResult();
+                                moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My location");
+                            } else {
+                                Toast.makeText(getApplicationContext(), " Location  is null", Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+            } catch (SecurityException e) {
+                Toast.makeText(getApplicationContext(), " Error while getting current location", Toast.LENGTH_LONG).show();
             }
-        } catch (SecurityException e) {
-            Toast.makeText(getApplicationContext(), " Error while getting current location", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(getApplicationContext(), "GPS provider disabled, current location unavailable", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -232,10 +483,9 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     private void getLocationPermission() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
-
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(getApplicationContext(),  COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationPermissionGranted = true;
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),  COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED) {
+                mLocationPermissionGranted=true;
                 initMap();
             }else {
 
@@ -279,7 +529,6 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
-
         hideSoftKeyboard();
     }
 
@@ -301,7 +550,9 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
                     {
                         //check if all permissions are granted
                         if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                            Toast.makeText(getApplicationContext(),"Permissions denied! ",Toast.LENGTH_SHORT).show();
                             mLocationPermissionGranted = false;
+                            initMap();
                             return;
                         }
                     }
@@ -317,9 +568,10 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
 
     //get location from address
     private void geoLocate(){
-        String searchBarInput = searchBar.getText().toString();
         Geocoder geocoder = new Geocoder(getApplicationContext());
+        String searchBarInput = searchBar.getText().toString();
         List<Address> list = new ArrayList<>();
+
 
         try {
             //return list of address with with size of maxResult
@@ -364,5 +616,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
 
         hideSoftKeyboard();
     }
+
+
 
 }
