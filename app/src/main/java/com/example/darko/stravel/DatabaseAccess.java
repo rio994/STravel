@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -17,39 +16,24 @@ public class DatabaseAccess {
     private SQLiteDatabase database;
     private static DatabaseAccess instance;
 
-    // Table Names
-    private static final String TABLE_PLACES = "Places";
-    private static final String TABLE_EVENTS = "Events";
-    private static final String TABLE_EVENTLINKS = "EventLinks";
-
-    //EventLinks Table - column names
-    private static final String KEY_ID_EVENTLINKS = "ID_eventLinks";
-    private static final String KEY_EVENTLINK = "event_link";
-
-    // Common column names
-    private static final String KEY_ID_PLACE = "ID_place";
+    //column names
+    private static final String KEY_ID = "id";
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_NAME = "name";
-
-    // PLACES Table - column names
     private static final String KEY_REVIEW = "review";
+    private static final String KEY_NUMBER_OF_REVIEWS = "number of reviews";
     private static final String KEY_TYPE = "type";
     private static final String KEY_SUBTYPE = "subtype";
-    private static final String KEY_WORK_TIME_BEGIN = "work_time_begin";
-    private static final String KEY_WORK_TIME_END = "work_time_end";
+    private static final String KEY_WORK_TIME = "working time";
     private static final String KEY_ADDRESS = "address";
-    private static final String KEY_TELEPHONE_NUMBER = "telephone_number";
-    private static final String KEY_EMAIL = "email";
-    private static final String KEY_WEBSITE = "website";
-
-    // EVENTS Table - column names
-    private static final String KEY_ID_EVENT = "ID_event";
-    private static final String KEY_START_TIME = "start_time";
-    private static final String KEY_END_TIME = "end_time";
-
+    private static final String KEY_TELEPHONE_NUMBER = "phone";
+    private static final String KEY_WEBSITE = "web site";
+    private static final String KEY_PICTURE = "picture";
+    private static final String KEY_LAT = "lat";
+    private static final String KEY_LON = "lon";
 
     /**
-     * Private constructor to aboid object creation from outside classes.
+     * Private constructor to avoid object creation from outside classes.
      *
      * @param context
      */
@@ -61,7 +45,7 @@ public class DatabaseAccess {
      * Return a singleton instance of DatabaseAccess.
      *
      * @param context the Context
-     * @return the instance of DabaseAccess
+     * @return the instance of DatabaseAccess
      */
     public static DatabaseAccess getInstance(Context context) {
         if (instance == null) {
@@ -74,7 +58,7 @@ public class DatabaseAccess {
      * Open the database connection.
      */
     public void open() {
-        this.database = openHelper.getWritableDatabase();
+        this.database = openHelper.getReadableDatabase();
     }
 
     /**
@@ -86,97 +70,139 @@ public class DatabaseAccess {
         }
     }
 
-    /**
-     * Read all quotes from the database.
-     *
-     * @return a List of quotes
-     */
 
-
-    //return all event links
-
-    public ArrayList<TableEventLinks> getAllEventLinks(Context context){
-        ArrayList<TableEventLinks> eventLinks = new ArrayList<>();
-       /* Cursor c = database.rawQuery("SELECT * FROM TableEventLinks", null);
-        c.moveToNext();
-        if(c.moveToFirst()){
-            do{
-                TableEventLinks e1 = new TableEventLinks();
-                e1.setID_eventLink(c.getInt(c.getColumnIndex(KEY_ID_EVENTLINKS)));
-                e1.setEventLink(c.getString(c.getColumnIndex(KEY_EVENTLINK)));
-                eventLinks.add(e1);
-            }while(c.moveToNext());
-
-        }*/
-
-        Cursor c = database.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-
-        if (c.moveToFirst()) {
-            while ( !c.isAfterLast() ) {
-                Toast.makeText(context, "Table Name=> "+c.getString(0), Toast.LENGTH_LONG).show();
-                c.moveToNext();
-            }
+    public ArrayList<TableRestaurant> getRestaurants() {
+        ArrayList<TableRestaurant> tableRestaurants = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM restraunts", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            TableRestaurant element=new TableRestaurant();
+            element.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+            element.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+            element.setLat(cursor.getString(cursor.getColumnIndex(KEY_LAT)));
+            element.setLon(cursor.getString(cursor.getColumnIndex(KEY_LON)));
+            element.setAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+            element.setWorkingTime(cursor.getString(cursor.getColumnIndex(KEY_WORK_TIME)));
+            element.setPhone(cursor.getString(cursor.getColumnIndex(KEY_TELEPHONE_NUMBER)));
+            element.setReview(cursor.getString(cursor.getColumnIndex(KEY_REVIEW)));
+            element.setNumberOfReviews(cursor.getString(cursor.getColumnIndex(KEY_NUMBER_OF_REVIEWS)));
+            element.setPicture(cursor.getString(cursor.getColumnIndex(KEY_PICTURE)));
+            element.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+            element.setType(cursor.getString(cursor.getColumnIndex(KEY_TYPE)));
+            tableRestaurants.add(element);
+            cursor.moveToNext();
         }
-
-
-        return eventLinks;
+        cursor.close();
+        return tableRestaurants;
     }
 
-
-    public ArrayList<TablePlaces> getPlaces() {
-        ArrayList<TablePlaces> places = new ArrayList<>();
-        Cursor c = database.rawQuery("SELECT * FROM TablePlaces", null);
-        c.moveToFirst();
-
-        if (c.moveToFirst()) {
-            do {
-                TablePlaces pl = new TablePlaces();
-                pl.setID_place(c.getInt((c.getColumnIndex(KEY_ID_PLACE))));
-                pl.setReview(c.getFloat(c.getColumnIndex(KEY_REVIEW)));
-                pl.setName((c.getString(c.getColumnIndex(KEY_NAME))));
-                pl.setType((c.getString(c.getColumnIndex(KEY_TYPE))));
-                pl.setSubtype((c.getString(c.getColumnIndex(KEY_SUBTYPE))));
-                //pl.setDescription((c.getString(c.getColumnIndex(KEY_DESCRIPTION))));
-                pl.setWork_time_begin((c.getString(c.getColumnIndex(KEY_WORK_TIME_BEGIN))));
-                pl.setWork_time_end((c.getString(c.getColumnIndex(KEY_WORK_TIME_END))));
-                pl.setAddress((c.getString(c.getColumnIndex(KEY_ADDRESS))));
-                pl.setTelephone_number((c.getString(c.getColumnIndex(KEY_TELEPHONE_NUMBER))));
-                pl.setEmail((c.getString(c.getColumnIndex(KEY_EMAIL))));
-                pl.setWebsite((c.getString(c.getColumnIndex(KEY_WEBSITE))));
-
-                places.add(pl);
-            } while (c.moveToNext());
+    public ArrayList<TableTransport> getTransport() {
+        ArrayList<TableTransport> tableTransports = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM transport", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            TableTransport element=new TableTransport();
+            element.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+            element.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+            element.setLat(cursor.getString(cursor.getColumnIndex(KEY_LAT)));
+            element.setLon(cursor.getString(cursor.getColumnIndex(KEY_LON)));
+            element.setAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+            element.setPhone(cursor.getString(cursor.getColumnIndex(KEY_TELEPHONE_NUMBER)));
+            element.setSubtype(cursor.getString(cursor.getColumnIndex(KEY_SUBTYPE)));
+            element.setWorkingTime(cursor.getString(cursor.getColumnIndex(KEY_WORK_TIME)));
+            element.setWebsite(cursor.getString(cursor.getColumnIndex(KEY_WEBSITE)));
+            element.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+            tableTransports.add(element);
+            cursor.moveToNext();
         }
-
-        c.close();
-        return places;
+        cursor.close();
+        return tableTransports;
     }
 
-
-    public TablePlaces getPlace(int id) {
-        TablePlaces place = new TablePlaces();
-        Cursor c = database.rawQuery("SELECT * FROM TablePlaces WHERE TablePlaces.ID_place = " + id + ";" , null);
-        c.moveToFirst();
-
-        if (c.moveToFirst()) {
-            place.setID_place(c.getInt((c.getColumnIndex(KEY_ID_PLACE))));
-            place.setReview(c.getFloat(c.getColumnIndex(KEY_REVIEW)));
-            place.setName((c.getString(c.getColumnIndex(KEY_NAME))));
-            place.setType((c.getString(c.getColumnIndex(KEY_TYPE))));
-            place.setSubtype((c.getString(c.getColumnIndex(KEY_SUBTYPE))));
-            //pl.setDescription((c.getString(c.getColumnIndex(KEY_DESCRIPTION))));
-            place.setWork_time_begin((c.getString(c.getColumnIndex(KEY_WORK_TIME_BEGIN))));
-            place.setWork_time_end((c.getString(c.getColumnIndex(KEY_WORK_TIME_END))));
-            place.setAddress((c.getString(c.getColumnIndex(KEY_ADDRESS))));
-            place.setTelephone_number((c.getString(c.getColumnIndex(KEY_TELEPHONE_NUMBER))));
-            place.setEmail((c.getString(c.getColumnIndex(KEY_EMAIL))));
-            place.setWebsite((c.getString(c.getColumnIndex(KEY_WEBSITE))));
-
+    public ArrayList<TableBarShopping> getBarsAndShops() {
+        ArrayList<TableBarShopping> tableBarShoppings = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM barshopping", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            TableBarShopping element=new TableBarShopping();
+            element.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+            element.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+            element.setLat(cursor.getString(cursor.getColumnIndex(KEY_LAT)));
+            element.setLon(cursor.getString(cursor.getColumnIndex(KEY_LON)));
+            element.setAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+            element.setPhone(cursor.getString(cursor.getColumnIndex(KEY_TELEPHONE_NUMBER)));
+            element.setReview(cursor.getString(cursor.getColumnIndex(KEY_REVIEW)));
+            element.setNumberOfReviews(cursor.getString(cursor.getColumnIndex(KEY_NUMBER_OF_REVIEWS)));
+            element.setPicture(cursor.getString(cursor.getColumnIndex(KEY_PICTURE)));
+            element.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+            element.setSubtype(cursor.getString(cursor.getColumnIndex(KEY_SUBTYPE)));
+            tableBarShoppings.add(element);
+            cursor.moveToNext();
         }
-
-        c.close();
-        return place;
+        cursor.close();
+        return tableBarShoppings;
     }
 
-    //adding to todo list - getBySubtypePlaces, getEvents
+    public ArrayList<TablePHP> getPHP() {
+        ArrayList<TablePHP> tablePHP = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM php", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            TablePHP element=new TablePHP();
+            element.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+            element.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+            element.setLat(cursor.getString(cursor.getColumnIndex(KEY_LAT)));
+            element.setLon(cursor.getString(cursor.getColumnIndex(KEY_LON)));
+            element.setAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+            element.setPhone(cursor.getString(cursor.getColumnIndex(KEY_TELEPHONE_NUMBER)));
+            element.setSubtype(cursor.getString(cursor.getColumnIndex(KEY_SUBTYPE)));
+            element.setWorkingTime(cursor.getString(cursor.getColumnIndex(KEY_WORK_TIME)));
+            tablePHP.add(element);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return tablePHP;
+    }
+
+    public ArrayList<TableBeach> getBeaches() {
+        ArrayList<TableBeach> tableBeaches = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM beach", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            TableBeach element=new TableBeach();
+            element.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+            element.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+            element.setLat(cursor.getString(cursor.getColumnIndex(KEY_LAT)));
+            element.setLon(cursor.getString(cursor.getColumnIndex(KEY_LON)));
+            element.setAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+            element.setReview(cursor.getString(cursor.getColumnIndex(KEY_REVIEW)));
+            element.setNumberOfReviews(cursor.getString(cursor.getColumnIndex(KEY_NUMBER_OF_REVIEWS)));
+            element.setPicture(cursor.getString(cursor.getColumnIndex(KEY_PICTURE)));
+            element.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+            tableBeaches.add(element);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return tableBeaches;
+    }
+
+    public ArrayList<TableAtmToilet> getATMsAndToilets() {
+        ArrayList<TableAtmToilet> tableAtmToilet = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM atmtoilete", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            TableAtmToilet element=new TableAtmToilet();
+            element.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+            element.setLat(cursor.getString(cursor.getColumnIndex(KEY_LAT)));
+            element.setLon(cursor.getString(cursor.getColumnIndex(KEY_LON)));
+            element.setAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+            element.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+            element.setSubtype(cursor.getString(cursor.getColumnIndex(KEY_SUBTYPE)));
+            tableAtmToilet.add(element);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return tableAtmToilet;
+    }
+
 }

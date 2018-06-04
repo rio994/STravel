@@ -34,9 +34,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recyclerview_item, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+            View view = mInflater.inflate(R.layout.recyclerview_item, parent, false);
+            ViewHolder viewHolder = new ViewHolder(view);
+            return viewHolder;
     }
 
     // binds the data to the view and textview in each row
@@ -70,14 +70,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView eventsName;
-        public TextView eventsDate;
-        public TextView eventTime;
-        public TextView eventLocation;
-        public TextView eventCategory;
-        public TextView eventDescription;
-        public TextView eventPrice;
-        public ImageView imgView;
+        private TextView eventsName;
+        private TextView eventsDate;
+        private TextView eventTime;
+        private TextView eventLocation;
+        private TextView eventCategory;
+        private TextView eventDescription;
+        private TextView eventPrice;
+        private ImageView imgView;
 
         public ViewHolder(View itemView) {
             super(itemView);
