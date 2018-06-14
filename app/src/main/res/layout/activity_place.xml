@@ -116,7 +116,7 @@
             android:id="@+id/place_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autoLink = "email"
+            android:autoLink="email"
             android:background="@color/white"
             android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
             android:text="worktime description etc..."

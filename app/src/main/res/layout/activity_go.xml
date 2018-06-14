@@ -18,7 +18,9 @@
         app:menu="@menu/navigation_menu"
         app:itemIconTint="@color/colorBlack"
         app:itemTextColor="@color/colorBlack"
-        app:itemBackground="@drawable/navigation_item_background"
+        app:itemBackground="@drawable/excursion_button"
+        android:background="@color/colorPrimaryDark"
+
         app:itemTextAppearance="@style/NavigationViewStyle"
         >
     </android.support.design.widget.NavigationView>

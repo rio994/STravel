@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class DownloadDataForEventsService extends Service {
 
-    LinksDataSingleton linksDataSingleton;
+    private LinksDataSingleton linksDataSingleton;
     //buffer for Table EventLinks retrieved from LinksDataSingleton
-    ArrayList<TableEventLinks> eventLinks;
+    private ArrayList<TableEventLinks> eventLinks;
 
     @Override
     public void onCreate() {
@@ -30,7 +30,6 @@ public class DownloadDataForEventsService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
     }
 
     public DownloadDataForEventsService() {

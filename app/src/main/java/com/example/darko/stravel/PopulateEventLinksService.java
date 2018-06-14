@@ -16,9 +16,9 @@ import java.util.concurrent.Executors;
 
 public class PopulateEventLinksService extends Service {
 
-    ArrayList<TableEventLinks> tableEventLinks;
-    ExecutorService executorService;
-    volatile LinksDataSingleton linksDataSingleton;
+    private ArrayList<TableEventLinks> tableEventLinks;
+    private ExecutorService executorService;
+    private volatile LinksDataSingleton linksDataSingleton;
 
     @Override
     public void onCreate() {

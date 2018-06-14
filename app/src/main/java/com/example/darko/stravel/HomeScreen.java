@@ -1,32 +1,21 @@
 package com.example.darko.stravel;
 
 import android.Manifest;
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.app.ProgressDialog;
 import android.content.Intent;
-
-import jp.wasabeef.blurry.Blurry;
-import android.widget.ImageView;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageButton;
-import android.os.AsyncTask;
-import java.io.InputStream;
-import android.util.Log;
-import android.widget.Toast;
+import android.widget.ImageView;
 
-public class HomeScreen extends AppCompatActivity {
+public class HomeScreen extends AppCompatActivity  {
 
+    ProgressDialog mProgressDialog;
+    LinksDataSingleton linksDataSingleton;
+    TableEventsNewSigletonArray tableEvents;
     private ImageButton about,places,events,info,go;
     ImageView img;
 
@@ -40,6 +29,9 @@ public class HomeScreen extends AppCompatActivity {
 
         //adding to todo list - better icons, better background
 
+        tableEvents = TableEventsNewSigletonArray.getInstance();
+        linksDataSingleton = LinksDataSingleton.getInstance();
+        mProgressDialog = new ProgressDialog(this);
         about = (ImageButton) findViewById(R.id.about);
         places = (ImageButton) findViewById(R.id.places);
         events = (ImageButton) findViewById(R.id.events);
@@ -87,31 +79,60 @@ public class HomeScreen extends AppCompatActivity {
     {
         Intent intent = new Intent(this, About.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     public void openPlaces()
     {
-        Intent intent = new Intent(this,Places.class);
+        Intent intent = new Intent(this,ThingsToDo.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void openEvents()
     {
-        Intent intent = new Intent(this,Events.class);
-        startActivity(intent);
+        if(tableEvents.getEventsTable() != null) {
+            mProgressDialog.setMessage("Updating Events.....");
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.setCancelable(true);
+            mProgressDialog.show();
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    while (tableEvents.getEventsTable().size() < 3) {
+                    }
+                    mProgressDialog.dismiss();
+
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(getApplicationContext(), Events.class);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                        }
+                    });
+                }
+            };
+            thread.start();
+        }
+
     }
 
     public void openInfo()
     {
         Intent intent = new Intent(this,Info.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void openGO()
     {
         Intent intent = new Intent(this,Go.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_bottom);
     }
+
+
 
 
 }

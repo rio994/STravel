@@ -26,6 +26,7 @@ public class ReadDatabaseService extends Service {
         databaseSingleton.setTablePHPs(databaseAccess.getPHP());
         databaseSingleton.setTableBeaches(databaseAccess.getBeaches());
         databaseSingleton.setTableTransport(databaseAccess.getTransport());
+        databaseSingleton.setTableExcursions(databaseAccess.getTableExcursions());
         databaseAccess.close();
         stopSelf();
         return Service.START_NOT_STICKY;
@@ -33,7 +34,6 @@ public class ReadDatabaseService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

@@ -32,8 +32,11 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".Go"
+            android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Events" />
+        <activity
+            android:name=".Events"
+            android:hardwareAccelerated="true" />
         <activity android:name=".Places" />
         <activity android:name=".ListPlaces" />
         <activity android:name=".Place" />
@@ -41,6 +44,11 @@
             android:name=".FullscreenImage"
             android:screenOrientation="landscape" />
         <activity android:name=".Info" />
+        <activity android:name=".ThingsToDo" />
+        <activity android:name=".ExcursionActivity"
+            android:hardwareAccelerated="true" ></activity>
+
+
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -52,18 +60,22 @@
         <service
             android:name=".PopulateEventLinksService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:hardwareAccelerated="true" />
         <service
             android:name=".DownloadDataForEventsService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:hardwareAccelerated="true" />
         <service
             android:name=".SingleLinkParseDataIntentService"
-            android:exported="false" />
+            android:exported="false"
+            android:hardwareAccelerated="true" />
         <service
             android:name=".ReadDatabaseService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
     </application>
 
 </manifest>

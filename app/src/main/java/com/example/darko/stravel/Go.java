@@ -16,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.view.KeyEvent;
@@ -42,7 +41,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +84,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
 
     //todo database holds more info than needed
 
+    //todo add fast food to navigation drawer
 
     //adding to todo list - add a fragment for a user to select between services instead of pressing on buttons (services)
 
@@ -123,6 +122,8 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
         setupNavigationContent();
 
     }
+
+
 
     //called once by API to setup map for first time (initial setup)
     @Override
@@ -438,6 +439,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
                 break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
+
     }
 
     //close drawer on Back pressed or close activity
@@ -615,6 +617,11 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
         }
 
         hideSoftKeyboard();
+    }
+
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_top);
     }
 
 

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ThingsToDo"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    android:elevation="5dp"
+    >
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/culturalTours"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:textSize="20sp"
+        android:text="Cultural and historical "
+        android:textStyle="bold"
+        android:background="@drawable/excursion_button"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        />
+
+    <Button
+        android:layout_marginTop="8dp"
+        android:id="@+id/dayTrips"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:textSize="20sp"
+        android:text="Day Trips"
+        android:textStyle="bold"
+        android:background="@drawable/excursion_button"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        />
+
+    <Button
+        android:id="@+id/oldSplit"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@drawable/excursion_button"
+        android:text="Experience Old Split"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        />
+
+    <Button
+        android:layout_marginTop="8dp"
+        android:id="@+id/natureParks"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:textSize="20sp"
+        android:text="Nature and parks"
+        android:textStyle="bold"
+        android:background="@drawable/excursion_button"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        />
+
+    <Button
+        android:layout_marginTop="8dp"
+        android:id="@+id/outdoorActivities"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:textSize="20sp"
+        android:text="Outdoor Activities"
+        android:textStyle="bold"
+        android:background="@drawable/excursion_button"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        />
+
+    <Button
+        android:layout_marginTop="8dp"
+        android:id="@+id/waterTours"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:textSize="20sp"
+        android:text="Sailing and Water"
+        android:textStyle="bold"
+        android:background="@drawable/excursion_button"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        />
+
+    </LinearLayout>
+</RelativeLayout>
