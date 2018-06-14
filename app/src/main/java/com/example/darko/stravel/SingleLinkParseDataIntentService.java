@@ -25,7 +25,6 @@ public class SingleLinkParseDataIntentService extends IntentService {
         super("SingleLinkParseDataIntentService");
     }
 
-
     public static void startActionDownloadData(Context context, String param1) {
         Intent intent = new Intent(context, SingleLinkParseDataIntentService.class);
         intent.setAction(ACTION_DOWNLOAD);

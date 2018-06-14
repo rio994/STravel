@@ -1,19 +1,12 @@
 package com.example.darko.stravel;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ExpandableListView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import android.content.Intent;
-import android.widget.TextView;
-import android.database.Cursor;
 
 
 public class Places extends AppCompatActivity {
@@ -71,16 +64,15 @@ public class Places extends AppCompatActivity {
         listDataHeader = new ArrayList<>();
         listHash = new HashMap<>();
 
-        listDataHeader.add("Accomodation");
-        listDataHeader.add("Food & Drink");
-        listDataHeader.add("Leisure");
-        listDataHeader.add("Retail");
-        listDataHeader.add("Sights");
+        listDataHeader.add("Experience Old Split");
+        listDataHeader.add("Cruises, Sailing & Water Tours");
+        listDataHeader.add("Cultural & Historical Tours");
+        listDataHeader.add("Nature & Parks");
+        listDataHeader.add("Day Trips");
+        listDataHeader.add("Outdoor Activities");
 
-        List<String> Accomodation = new ArrayList<>();
-        Accomodation.add("Apartments");
-        Accomodation.add("Hostels");
-        Accomodation.add("Hotels");
+
+        List<String> oldSplit = new ArrayList<>();
 
         List<String> Retail = new ArrayList<>();
         Retail.add("Convenience stores");
@@ -103,7 +95,6 @@ public class Places extends AppCompatActivity {
         Sights.add("Cultural");
         Sights.add("Historical");
 
-        listHash.put(listDataHeader.get(0),Accomodation);
         listHash.put(listDataHeader.get(1),FoodDrink);
         listHash.put(listDataHeader.get(2),Leisure);
         listHash.put(listDataHeader.get(3),Retail);

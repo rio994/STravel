@@ -8,31 +8,29 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import android.view.View;
-
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-import android.widget.ExpandableListView;
-import android.view.MotionEvent;
-
-import org.apache.commons.io.IOUtils;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.ExpandableListView.OnGroupExpandListener;
 
 public class About extends AppCompatActivity {
 
@@ -311,6 +309,10 @@ public class About extends AppCompatActivity {
     }
 
 
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
 
 
 

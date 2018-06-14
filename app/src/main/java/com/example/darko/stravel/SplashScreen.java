@@ -18,12 +18,13 @@ public class SplashScreen extends FragmentActivity {
             @Override
             public void run() {
                 try {
-                    sleep(2000);
+                    sleep(1500);
                     finish();
                     startService(new Intent(getApplicationContext(),ReadDatabaseService.class));
                     startService(new Intent(getApplicationContext(),PopulateEventLinksService.class));
                     Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

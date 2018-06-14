@@ -15,6 +15,7 @@ public class LinksDataSingleton  {
         this.tableEventLinks = new ArrayList<>(tableEventLinks);
     }
 
-    public static final LinksDataSingleton dataHolder = new LinksDataSingleton();
+
+    private static final LinksDataSingleton dataHolder = new LinksDataSingleton();
     public static  LinksDataSingleton getInstance(){return dataHolder;}
 }

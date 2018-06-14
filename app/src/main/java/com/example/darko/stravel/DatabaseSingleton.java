@@ -10,22 +10,21 @@ public class DatabaseSingleton {
     private ArrayList<TableAtmToilet> tableAtmToilets;
     private ArrayList<TableBeach> tableBeaches;
     private ArrayList<TableTransport>tableTransport;
+    private ArrayList<TableExcursions>tableExcursions;
 
 
-    public static DatabaseSingleton getDataHolder() {
-        return dataHolder;
-    }
     private static final DatabaseSingleton dataHolder = new DatabaseSingleton();
     public static  DatabaseSingleton getInstance(){return dataHolder;}
 
     //constructor
-    DatabaseSingleton(){
+    private DatabaseSingleton(){
         tableRestaurants =new ArrayList<>();
         tableBarShoppings=new ArrayList<>();
         tablePHPs=new ArrayList<>();
         tableAtmToilets =new ArrayList<>();
         tableBeaches=new ArrayList<>();
         tableTransport=new ArrayList<>();
+        tableExcursions = new ArrayList<>();
     }
 
     //getters and setters
@@ -77,5 +76,11 @@ public class DatabaseSingleton {
         this.tableBeaches = tableBeaches;
     }
 
+    public ArrayList<TableExcursions> getTableExcursions() {
+        return tableExcursions;
+    }
 
+    public void setTableExcursions(ArrayList<TableExcursions> tableExcursions) {
+        this.tableExcursions = tableExcursions;
+    }
 }

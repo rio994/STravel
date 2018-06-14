@@ -31,6 +31,9 @@ public class DatabaseAccess {
     private static final String KEY_PICTURE = "picture";
     private static final String KEY_LAT = "lat";
     private static final String KEY_LON = "lon";
+    private static final String KEY_EXPECTATION ="expectation";
+    private static final String KEY_INFO = "info";
+
 
     /**
      * Private constructor to avoid object creation from outside classes.
@@ -70,6 +73,25 @@ public class DatabaseAccess {
         }
     }
 
+    public ArrayList<TableExcursions> getTableExcursions(){
+        ArrayList<TableExcursions> tableExcursions = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM excursions", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            TableExcursions element=new TableExcursions();
+            element.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+            element.setExcursionName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+            element.setOverview(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+            element.setExpectation(cursor.getString(cursor.getColumnIndex(KEY_EXPECTATION)));
+            element.setInfo(cursor.getString(cursor.getColumnIndex(KEY_INFO)));
+            element.setSubtype(cursor.getString(cursor.getColumnIndex(KEY_SUBTYPE)));
+            tableExcursions.add(element);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return tableExcursions;
+
+    }
 
     public ArrayList<TableRestaurant> getRestaurants() {
         ArrayList<TableRestaurant> tableRestaurants = new ArrayList<>();
@@ -204,5 +226,6 @@ public class DatabaseAccess {
         cursor.close();
         return tableAtmToilet;
     }
+
 
 }
