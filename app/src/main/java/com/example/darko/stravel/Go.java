@@ -4,6 +4,7 @@ package com.example.darko.stravel;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -34,6 +35,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -52,7 +55,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int REQUEST_CODE = 1950;
     private static final float DEFAULT_ZOOM = 15f;
-    private static final float DEFAULT_ZOOM_ON_ITEM_CLICKED = 14f;
+    private static final float DEFAULT_ZOOM_ON_ITEM_CLICKED = 14.5f;
     private static final LatLng DEFAULT_LAT_LNG = new LatLng(43.511032,16.436404);
 
     //variables
@@ -64,6 +67,9 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     private boolean isInfoWindowShown=false;
     private LocationManager locationManager;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    private BitmapDescriptor markerBlue;
+    private BitmapDescriptor markerRed;
+
 
     //navigation menu
     private DrawerLayout mDrawerLayout;
@@ -84,7 +90,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
 
     //todo database holds more info than needed
 
-    //todo add fast food to navigation drawer
+    //todo add bank and desserts to navigation drawer
 
     //adding to todo list - add a fragment for a user to select between services instead of pressing on buttons (services)
 
@@ -93,6 +99,8 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_go);
         locationManager=(LocationManager)getApplicationContext().getSystemService((Context.LOCATION_SERVICE));
+        markerBlue = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.markerblue));
+        markerRed = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.markerred));
         gpsButton = (ImageView)findViewById(R.id.ic_gps);
         searchBar = (EditText)findViewById(R.id.map_search_edit_text);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -130,6 +138,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         //if gps provider is on
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             //if location permission is enabled get my current location
@@ -217,9 +226,14 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
                             "Phone: "+ restaurants.get(i).getPhone()+"\n"+
                             "Address: "+ restaurants.get(i).getAddress()+"\n"+
                             "Description: "+ restaurants.get(i).getDescription();
+
                     LatLng latLng = new LatLng(Double.parseDouble(restaurants.get(i).getLat()),Double.parseDouble(restaurants.get(i).getLon()));
                     MarkerOptions options = new MarkerOptions().position(latLng).title(restaurants.get(i).getName()+ "\t  "+restaurants.get(i).getReview()+"\u2606").snippet(snippet);
-                    mMarker=mMap.addMarker(options);
+                   if(Float.parseFloat(restaurants.get(i).getReview())<4.5)
+                        options.icon(markerBlue);
+                    else
+                        options.icon(markerRed);
+                   mMarker=mMap.addMarker(options);
                 }
                 mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LAT_LNG,DEFAULT_ZOOM_ON_ITEM_CLICKED));
@@ -228,7 +242,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
             case R.id.bars_and_clubs:
                 mMap.clear();
                 for(int i = 0; i< barShopping.size(); i++){
-                    if(barShopping.get(i).getSubtype().equals("bar")|| barShopping.get(i).getSubtype().equals("club")) {
+                    if(barShopping.get(i).getSubtype().equals("bar")|| barShopping.get(i).getSubtype().equals("club")|| barShopping.get(i).getSubtype().equals("nb")|| barShopping.get(i).getSubtype().equals("cb")) {
                         String snippet = barShopping.get(i).getNumberOfReviews() + " reviews"+"\n"+
                                 "Working time: "+ barShopping.get(i).getWorkingTime()+"\n"+
                                 "Phone: "+ barShopping.get(i).getPhone()+"\n"+
@@ -236,6 +250,8 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
                                 "Description: "+ barShopping.get(i).getDescription();
                         LatLng latLng = new LatLng(Double.parseDouble(barShopping.get(i).getLat()),Double.parseDouble(barShopping.get(i).getLon()));
                         MarkerOptions options = new MarkerOptions().position(latLng).title(barShopping.get(i).getName()+ "\t  "+ barShopping.get(i).getReview()+"\u2606").snippet(snippet);
+                        if(Float.parseFloat(barShopping.get(i).getReview())>4.5)
+                            options.icon(markerBlue);
                         mMarker=mMap.addMarker(options);
                     }
                 }
@@ -246,7 +262,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
             case R.id.cafes:
                 mMap.clear();
                 for(int i = 0; i< barShopping.size(); i++){
-                    if(barShopping.get(i).getSubtype().equals("cafe")|| barShopping.get(i).getSubtype().equals("c")) {
+                    if(barShopping.get(i).getSubtype().equals("cafe")|| barShopping.get(i).getSubtype().equals("c")|| barShopping.get(i).getSubtype().equals("cb")) {
                         String snippet = barShopping.get(i).getNumberOfReviews() + " reviews"+"\n"+
                                 "Working time: "+ barShopping.get(i).getWorkingTime()+"\n"+
                                 "Phone: "+ barShopping.get(i).getPhone()+"\n"+
@@ -254,6 +270,8 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
                                 "Description: "+ barShopping.get(i).getDescription();
                         LatLng latLng = new LatLng(Double.parseDouble(barShopping.get(i).getLat()),Double.parseDouble(barShopping.get(i).getLon()));
                         MarkerOptions options = new MarkerOptions().position(latLng).title(barShopping.get(i).getName()+ "\t  "+ barShopping.get(i).getReview()+"\u2606").snippet(snippet);
+                        if(Float.parseFloat(barShopping.get(i).getReview())>4.5)
+                            options.icon(markerBlue);
                         mMarker=mMap.addMarker(options);
                     }
                 }
@@ -264,7 +282,7 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
             case R.id.night_life:
                 mMap.clear();
                 for(int i = 0; i< barShopping.size(); i++){
-                    if(barShopping.get(i).getSubtype().equals("night club")|| barShopping.get(i).getSubtype().equals("n")) {
+                    if(barShopping.get(i).getSubtype().equals("night club")|| barShopping.get(i).getSubtype().equals("nb")) {
                         String snippet = barShopping.get(i).getNumberOfReviews() + " reviews"+"\n"+
                                 "Working time: "+ barShopping.get(i).getWorkingTime()+"\n"+
                                 "Phone: "+ barShopping.get(i).getPhone()+"\n"+
@@ -272,6 +290,8 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
                                 "Description: "+ barShopping.get(i).getDescription();
                         LatLng latLng = new LatLng(Double.parseDouble(barShopping.get(i).getLat()),Double.parseDouble(barShopping.get(i).getLon()));
                         MarkerOptions options = new MarkerOptions().position(latLng).title(barShopping.get(i).getName()+ "\t  "+ barShopping.get(i).getReview()+"\u2606").snippet(snippet);
+                        if(Float.parseFloat(barShopping.get(i).getReview())>4.1)
+                            options.icon(markerBlue);
                         mMarker=mMap.addMarker(options);
                     }
                 }
@@ -287,6 +307,8 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
                                 "Description: "+ beaches.get(i).getDescription();
                         LatLng latLng = new LatLng(Double.parseDouble(beaches.get(i).getLat()),Double.parseDouble(beaches.get(i).getLon()));
                         MarkerOptions options = new MarkerOptions().position(latLng).title(beaches.get(i).getName()+ "\t  "+beaches.get(i).getReview()+"\u2606").snippet(snippet);
+                    if(Float.parseFloat(beaches.get(i).getReview())>4.5)
+                        options.icon(markerBlue);
                         mMarker=mMap.addMarker(options);
                     }
                     mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
@@ -625,5 +647,6 @@ public class Go extends AppCompatActivity implements OnMapReadyCallback {
     }
 
 
-
 }
+
+

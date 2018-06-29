@@ -45,7 +45,7 @@
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="20dp"
                     android:layout_weight="1"
-                    android:background="@drawable/about"
+                    android:background="@drawable/questionmark"
                     android:gravity="center" />
 
                 <TextView
