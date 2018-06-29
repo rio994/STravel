@@ -1,8 +1,6 @@
 package com.example.darko.stravel;
 
-/**
- * Created by Darko on 16.1.2018..
- */
+
 
 import android.content.Context;
 import android.database.Cursor;
@@ -152,6 +150,7 @@ public class DatabaseAccess {
             element.setLat(cursor.getString(cursor.getColumnIndex(KEY_LAT)));
             element.setLon(cursor.getString(cursor.getColumnIndex(KEY_LON)));
             element.setAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+            element.setWorkingTime(cursor.getString(cursor.getColumnIndex(KEY_WORK_TIME)));
             element.setPhone(cursor.getString(cursor.getColumnIndex(KEY_TELEPHONE_NUMBER)));
             element.setReview(cursor.getString(cursor.getColumnIndex(KEY_REVIEW)));
             element.setNumberOfReviews(cursor.getString(cursor.getColumnIndex(KEY_NUMBER_OF_REVIEWS)));
