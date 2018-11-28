@@ -1,5 +1,9 @@
 Tourist travel guide Android app for city of Split, Croatia.
 
+Integrated Web Scrapper and Google Map with Google Places search ability for Croatia
+Web Scrapper implemented with JSUOP and designed for scrapping data from http://infozona.hr/calendar/weekly directly to application database
+Threads for Retriving and processing data are organized by ExecutorServices 
+
 Contributors
 
 Shegy2106
